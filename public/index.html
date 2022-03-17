@@ -45,7 +45,7 @@
     }
   });
 
-  socket.on('hello', function({message}) {
+  socket.on('hello', function(message) {
     var item = document.createElement('li');
     item.textContent = message;
     messages.appendChild(item);
