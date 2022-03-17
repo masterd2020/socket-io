@@ -18,6 +18,10 @@
   <body>
     <ul id="messages"></ul>
     <form id="form" action="">
+      <input type="checkbox" id="everyone" name="everyone" value="everyone" class="box"><label for="everyone" >everyone</label>
+      <input type="checkbox" id="doctor" name="doctor" value="doctor" class="box"><label for="doctor" >doctor</label>
+      <input type="checkbox" id="hospital" name="hospital" value="hospital" class="box"><label for="hospital" >hospital</label>
+      <input type="checkbox" id="user" name="user" value="user"class="box"><label for="user" >user</label><br>
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
@@ -25,14 +29,32 @@
   var socket = io();
   var form = document.getElementById('form');
   var input = document.getElementById('input');
+  let boxes = Array.from(document.querySelectorAll('.box'));
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     if (input.value) {
-      socket.emit('chat-message', input.value);
+      let boxValue = 'user'
+
+      for (let box in boxes) {
+        boxes[box].checked ? boxValue = boxes[box].value : ''
+      }
+
+      socket.emit('chat-message', {message: input.value, type: boxValue});
       input.value = '';
     }
   });
+
+  socket.on('hello', function({message}) {
+    var item = document.createElement('li');
+    item.textContent = message;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+  socket.on('test', (data) => {
+    console.log(data)
+  })
 </script>
   </body>
 </html>
